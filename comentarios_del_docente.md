@@ -163,3 +163,26 @@ No se pide y **no suma**:
 1. `main.py` con FastAPI levantando y `/docs` abriendo.
 2. `seed.py` que cree las 3 tablas (`sedes`, `carreras`, `materias`) y cargue unos 10 registros de cada una.
 3. Recordá la clave foránea: `materias.carrera_id` y `carreras.sede_id`.
+
+## 24/09
+
+**Lo que hay:** renombraste `API.py` a `main.py` 👍, pero el contenido **no arranca**: falta `from fastapi import FastAPI`, y las llaves `{ ... }` que envuelven `carreras = [...]` son un error de sintaxis (una asignación no puede ir dentro de un diccionario).
+
+**A corregir**
+- `main.py` mínimo que levante:
+  ```python
+  from fastapi import FastAPI
+  app = FastAPI()
+
+  @app.get("/")
+  def inicio():
+      return {"mensaje": "Mendobot API"}
+  ```
+- Los datos de carreras y materias no van escritos en `main.py`: van en la base, cargados por `seed.py`. `main.py` solo consulta.
+- **La base va con SQLAlchemy** (ver [guias/sqlalchemy_orm.md](guias/sqlalchemy_orm.md)): tablas como clases. Sin `sqlite3` ni SQL a mano.
+- Falta `requirements.txt`.
+
+**Próximos pasos**
+1. `main.py` levantando y `/docs` abriendo.
+2. `seed.py` con SQLAlchemy: `sedes`, `carreras` (con `sede_id` y `duracion_anios`) y `materias` (con `carrera_id` y `anio`), ~10 registros por tabla, carga solo si está vacía.
+3. `requirements.txt` con `fastapi`, `uvicorn`, `uvicorn-worker`, `gunicorn`, `sqlalchemy`.

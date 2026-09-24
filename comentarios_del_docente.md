@@ -22,6 +22,11 @@ Esto es lo que hay que entregar. Lo que no está acá, no se pide.
 - Repositorio en GitHub con commits de **todos** los integrantes.
 - API desplegada **en producción con Gunicorn** en Render, con URL pública y `/docs` funcionando (ver abajo).
 
+### Nombres en el código (criterio acordado con la cátedra de Inglés)
+- **Variables, funciones y clases en inglés**: `list_students`, `get_session`, `class Student(Base)`.
+- **Tablas, columnas, rutas y query params** quedan **como figuran en el alcance** (en español): son el contrato de la API. Ejemplo: `class Student(Base)` con `__tablename__ = "estudiantes"` y columna `anio_cursada`.
+- **Comentarios**: pueden estar en español mientras desarrollan, pero para la **entrega final** tienen que estar en inglés.
+
 ### Despliegue a producción (Render + Gunicorn)
 
 En tu compu desarrollás con `uvicorn main:app --reload`. En producción corre **Gunicorn** como administrador de procesos, con workers de Uvicorn adentro.
@@ -165,6 +170,8 @@ No se pide y **no suma**:
 3. Recordá la clave foránea: `materias.carrera_id` y `carreras.sede_id`.
 
 ## 24/09
+
+**📌 Criterio de nombres.** Variables, funciones y clases en **inglés**; tablas, columnas y rutas como en el alcance; comentarios en inglés para la entrega final. Está detallado arriba en *Reglas comunes* y la guía ya lo aplica.
 
 **Lo que hay:** renombraste `API.py` a `main.py` 👍, pero el contenido **no arranca**: falta `from fastapi import FastAPI`, y las llaves `{ ... }` que envuelven `carreras = [...]` son un error de sintaxis (una asignación no puede ir dentro de un diccionario).
 

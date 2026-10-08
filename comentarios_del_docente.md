@@ -198,3 +198,34 @@ No se pide y **no suma**:
 1. `main.py` levantando y `/docs` abriendo.
 2. `seed.py` con SQLAlchemy: `sedes`, `carreras` (con `sede_id` y `duracion_anios`) y `materias` (con `carrera_id` y `anio`), ~10 registros por tabla, carga solo si está vacía.
 3. `requirements.txt` con `fastapi`, `uvicorn`, `uvicorn-worker`, `gunicorn`, `sqlalchemy`.
+
+## 08/10
+
+**📌 Cambio de criterio: todo en inglés.** Ahora también las **tablas, columnas, rutas y query params** van en inglés, igual que el README, los docstrings y los mensajes de la API. Reemplaza lo dicho el 24/09; está detallado arriba en *Nombres en el código*. El alcance sigue listando los nombres en español solo como referencia.
+
+**📌 Guía nueva (opcional):** [guias/variables_de_entorno.md](guias/variables_de_entorno.md), para sacar la clave del código con un `.env`.
+
+**Lo que hay:** sin cambios. El último commit es del **23/09**, hace más de dos semanas, y `main.py` sigue sin arrancar por los mismos dos errores que marqué el 24/09 (falta el `import` y sobran las llaves).
+
+**⚠️ Estás muy atrasado.** Hay grupos con los seis endpoints funcionando y otros con la base ya armada. Trabajás solo, así que nadie más va a empujar el proyecto. Si estás trabado con algo puntual, decímelo en clase o por mensaje: es mejor preguntar que no subir nada.
+
+**Próximos pasos (urgente)** — son los mismos del 24/09, con los nombres ya en inglés:
+1. `main.py` mínimo que levante. Probalo con `uvicorn main:app --reload` y abrí `/docs`:
+   ```python
+   from fastapi import FastAPI
+
+   app = FastAPI()
+
+   @app.get("/")
+   def home():
+       return {"message": "Mendobot API"}
+   ```
+2. `db.py` con SQLAlchemy, siguiendo la [guía](guias/sqlalchemy_orm.md). Podés copiar `guias/pokedex/db.py` y adaptarlo. Las tres tablas, en inglés:
+   - `locations`: id, name, city, address
+   - `careers`: id, code, name, mode, duration_years, `location_id` (FK)
+   - `subjects`: id, name, year, `career_id` (FK)
+3. `seed.py` que cargue unos 10 registros por tabla, solo si la base está vacía (sección 9 de la guía).
+4. `requirements.txt` con `fastapi`, `uvicorn`, `uvicorn-worker`, `gunicorn`, `sqlalchemy`.
+5. Los dos primeros endpoints: `GET /careers?mode=` y `GET /careers/{id}` con 404.
+
+Subí cada paso apenas funcione, aunque sea chico. Un commit por día vale más que todo junto al final.

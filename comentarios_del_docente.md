@@ -22,6 +22,16 @@ Esto es lo que hay que entregar. Lo que no está acá, no se pide.
 - Repositorio en GitHub con commits de **todos** los integrantes.
 - API desplegada **en producción con Gunicorn** en Render, con URL pública y `/docs` funcionando (ver abajo).
 
+### Nombres en el código (criterio acordado con la cátedra de Inglés)
+
+> **Actualizado el 08/10:** ahora va **todo en inglés**, también tablas, columnas y rutas. Reemplaza el criterio del 24/09.
+
+- **Variables, funciones y clases en inglés**: `list_students`, `get_session`, `class Student(Base)`.
+- **Tablas, columnas, rutas y query params también en inglés**. Ejemplo: `class Student(Base)` con `__tablename__ = "students"`, columna `career_id` y ruta `GET /students`.
+- El alcance de cada grupo lista las tablas y los endpoints en español **solo como referencia**: tradúzcanlos al inglés y usen **el mismo nombre en todos los archivos** (`db.py`, `seed.py`, `main.py`, `validation.py`).
+- **Documentación en inglés**: `README.md`, docstrings y los mensajes que devuelve la API.
+- **Comentarios**: pueden estar en español mientras desarrollan, pero para la **entrega final** tienen que estar en inglés.
+
 ### Despliegue a producción (Render + Gunicorn)
 
 En tu compu desarrollás con `uvicorn main:app --reload`. En producción corre **Gunicorn** como administrador de procesos, con workers de Uvicorn adentro.
@@ -163,3 +173,59 @@ No se pide y **no suma**:
 1. `main.py` con FastAPI levantando y `/docs` abriendo.
 2. `seed.py` que cree las 3 tablas (`sedes`, `carreras`, `materias`) y cargue unos 10 registros de cada una.
 3. Recordá la clave foránea: `materias.carrera_id` y `carreras.sede_id`.
+
+## 24/09
+
+**📌 Criterio de nombres.** Variables, funciones y clases en **inglés**; tablas, columnas y rutas como en el alcance; comentarios en inglés para la entrega final. Está detallado arriba en *Reglas comunes* y la guía ya lo aplica.
+
+**Lo que hay:** renombraste `API.py` a `main.py` 👍, pero el contenido **no arranca**: falta `from fastapi import FastAPI`, y las llaves `{ ... }` que envuelven `carreras = [...]` son un error de sintaxis (una asignación no puede ir dentro de un diccionario).
+
+**A corregir**
+- `main.py` mínimo que levante:
+  ```python
+  from fastapi import FastAPI
+  app = FastAPI()
+
+  @app.get("/")
+  def inicio():
+      return {"mensaje": "Mendobot API"}
+  ```
+- Los datos de carreras y materias no van escritos en `main.py`: van en la base, cargados por `seed.py`. `main.py` solo consulta.
+- **La base va con SQLAlchemy** (ver [guias/sqlalchemy_orm.md](guias/sqlalchemy_orm.md)): tablas como clases. Sin `sqlite3` ni SQL a mano.
+- Falta `requirements.txt`.
+
+**Próximos pasos**
+1. `main.py` levantando y `/docs` abriendo.
+2. `seed.py` con SQLAlchemy: `sedes`, `carreras` (con `sede_id` y `duracion_anios`) y `materias` (con `carrera_id` y `anio`), ~10 registros por tabla, carga solo si está vacía.
+3. `requirements.txt` con `fastapi`, `uvicorn`, `uvicorn-worker`, `gunicorn`, `sqlalchemy`.
+
+## 08/10
+
+**📌 Cambio de criterio: todo en inglés.** Ahora también las **tablas, columnas, rutas y query params** van en inglés, igual que el README, los docstrings y los mensajes de la API. Reemplaza lo dicho el 24/09; está detallado arriba en *Nombres en el código*. El alcance sigue listando los nombres en español solo como referencia.
+
+**📌 Guía nueva (opcional):** [guias/variables_de_entorno.md](guias/variables_de_entorno.md), para sacar la clave del código con un `.env`.
+
+**Lo que hay:** sin cambios. El último commit es del **23/09**, hace más de dos semanas, y `main.py` sigue sin arrancar por los mismos dos errores que marqué el 24/09 (falta el `import` y sobran las llaves).
+
+**⚠️ Estás muy atrasado.** Hay grupos con los seis endpoints funcionando y otros con la base ya armada. Trabajás solo, así que nadie más va a empujar el proyecto. Si estás trabado con algo puntual, decímelo en clase o por mensaje: es mejor preguntar que no subir nada.
+
+**Próximos pasos (urgente)** — son los mismos del 24/09, con los nombres ya en inglés:
+1. `main.py` mínimo que levante. Probalo con `uvicorn main:app --reload` y abrí `/docs`:
+   ```python
+   from fastapi import FastAPI
+
+   app = FastAPI()
+
+   @app.get("/")
+   def home():
+       return {"message": "Mendobot API"}
+   ```
+2. `db.py` con SQLAlchemy, siguiendo la [guía](guias/sqlalchemy_orm.md). Podés copiar `guias/pokedex/db.py` y adaptarlo. Las tres tablas, en inglés:
+   - `locations`: id, name, city, address
+   - `careers`: id, code, name, mode, duration_years, `location_id` (FK)
+   - `subjects`: id, name, year, `career_id` (FK)
+3. `seed.py` que cargue unos 10 registros por tabla, solo si la base está vacía (sección 9 de la guía).
+4. `requirements.txt` con `fastapi`, `uvicorn`, `uvicorn-worker`, `gunicorn`, `sqlalchemy`.
+5. Los dos primeros endpoints: `GET /careers?mode=` y `GET /careers/{id}` con 404.
+
+Subí cada paso apenas funcione, aunque sea chico. Un commit por día vale más que todo junto al final.

@@ -257,3 +257,72 @@ Subí cada paso apenas funcione, aunque sea chico. Un commit por día vale más 
 4. `security.py` con la API key, y probar que sin clave da 401. Si llegás, leela de un `.env` en vez de escribirla en el código.
 5. Un endpoint que calcule algo: `GET /careers/{id}/summary`, con la cantidad de materias por año.
 6. `requirements.txt` y un README que diga cómo correrlo. Hay guías para las dos cosas en `guias/`.
+
+## 17/10
+
+**Lo que hay:** buen salto. 👍 `models.py` está bien armado: las tres tablas en inglés, con sus claves foráneas, las `relationship` y los `to_dict`. Probé `seed.py`: carga 3 sedes, 5 carreras y 111 materias con los planes de estudio reales, y si se corre dos veces no duplica. `requirements.txt` y `.gitignore` están bien. Ya tenés resuelta la parte más larga, que son los datos.
+
+**⚠️ La API todavía no arranca.** `main.py` no cambió desde el 07/10: hace `from datos import carreras`, ese archivo no existe, y `uvicorn main:app` falla con `ModuleNotFoundError`. Tampoco hay endpoints. `security.py` está bien escrito, pero no se usa en ningún lado.
+
+Lo que falta es conectar FastAPI a lo que ya tenés. Es el tercer paso del plan que dejaste anotado en el seed.
+
+**1. `crud.py`**, con las funciones que leen la base. Las dos primeras quedan así (las probé con tu `models.py`):
+
+```python
+from sqlalchemy import select
+
+from models import get_session, Career
+
+
+def list_careers(mode: str | None = None) -> list[dict]:
+    with get_session() as s:
+        query = select(Career)
+        if mode is not None:
+            query = query.where(Career.mode == mode)
+        return [career.to_dict() for career in s.scalars(query)]
+
+
+def get_career(career_id: int) -> dict | None:
+    with get_session() as s:
+        career = s.get(Career, career_id)
+        return career.to_dict() if career else None
+```
+
+**2. `main.py`**, que reemplaza todo lo que hay hoy. Crea la app, la protege con tu `security.py` y tiene un endpoint corto por cada función de `crud.py`:
+
+```python
+from fastapi import FastAPI, Depends, HTTPException
+
+import crud
+from security import verify_api_key
+
+app = FastAPI(title="Mendobot API", dependencies=[Depends(verify_api_key)])
+
+
+@app.get("/careers")
+def list_careers(mode: str | None = None):
+    return crud.list_careers(mode)
+
+
+@app.get("/careers/{career_id}")
+def get_career(career_id: int):
+    career = crud.get_career(career_id)
+    if career is None:
+        raise HTTPException(status_code=404, detail="Career not found")
+    return career
+```
+
+Con eso, `uvicorn main:app --reload` levanta, `/docs` abre, sin clave da 401 y `GET /careers/99` da 404.
+
+**3. Los cuatro que faltan**, siguiendo el mismo patrón (función en `crud.py` y endpoint en `main.py`):
+- `GET /careers/{id}/subjects?year=1`: las materias de una carrera, filtrando por `Subject.career_id` y, si viene, por `Subject.year`. Si la carrera no existe, 404.
+- `GET /locations?city=`: igual que `list_careers`, sobre `Location`.
+- `GET /careers/{id}/summary`: la cantidad de materias por año. Alcanza con recorrer las materias de la carrera y contar en un diccionario `{1: 5, 2: 6, ...}`. Es el endpoint "que calcula algo" que se pide en la defensa.
+- `POST /subjects`: recibe `name`, `year` y `career_id`, los valida (a mano o con un modelo de Pydantic), controla que la carrera exista y devuelve 201. Si algo está mal, 400.
+
+Si no llegás con los seis, priorizá en este orden: los dos de arriba, el de materias, el resumen y, por último, sedes y el `POST`.
+
+**Recomendaciones**
+- Hoy las 5 carreras son presenciales y todas están en la sede de Río Cuarto. Así, `?mode=` y `?city=` no muestran nada distinto de la lista completa. Si cargás alguna carrera virtual o de otra sede, se ve el filtro funcionando en la demo.
+- Antes de cada commit, levantá la API y probá en `/docs`.
+- El README sigue con la descripción del chatbot. Agregale cómo correr el proyecto y los endpoints: hay una plantilla en [guias/como_escribir_un_readme.md](guias/como_escribir_un_readme.md).

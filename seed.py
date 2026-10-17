@@ -1,29 +1,25 @@
-import sqlite3
-Base = sqlite3.connect("mendobot.db")
+from sqlalchemy import select
+from models import create_tables, get_session, Location, Career, Subject
 
-sedes = [
-    (1, "Sede regional", "Rio cuarto", "Cordoba"),
-    (2, "Sede central", "Mendoza", "Mendoza"),
-    (3, "Sede regional", "San rafael", "Mendoza"),
-    (4, "Extención aulica", "Cipolletti", "Rio negro"),
+#                                       DATA
+
+# (id, name, city, address)
+locations = [
+    (1, "Sede Regional Río Cuarto", "Río Cuarto", "Belgrano esq. Hipólito Yrigoyen"),
+    (2, "Sede Central", "Mendoza", "Boulogne Sur Mer 683"),
+    (3, "Sede Regional San Rafael", "San Rafael", "Bernardo de Irigoyen y España"),
 ]
 
-facultades = [
-    (1, "Ingenieria"),
-    (2, "Arquitectura, Urbanismo y diseño"),
-    (3, "Ciencias jurídicas y sociales"),
-    (4, "Ciencaias de la salud"),
-]
-# (id, codigo, nombre, facultad)
-carreras = [
-    (1, "TDS", "Tecnicatura en desarrollo de software", 1,1),
-    (2, "AU","Arquitectura y urbanismo", 2,1),
-    (3, "DG", "Diseño grafico", 2,1),
-    (4, "LK", "Licenciatura en Kinesiologia", 4,1),
-    (5, "CIyMP", "Corredor imobiliario y martillero publico", 3,1),
+# (id, code, name, mode, duration_years, location_id)
+careers = [
+    (1, "TDS", "Tecnicatura en Desarrollo de Software", "presencial", 3, 1),
+    (2, "AU", "Arquitectura y Urbanismo", "presencial", 5, 1),
+    (3, "DG", "Diseño Gráfico", "presencial", 3, 1),
+    (4, "LK", "Licenciatura en Kinesiología", "presencial", 5, 1),
+    (5, "CIyMP", "Corredor Inmobiliario y Martillero Público", "presencial", 3, 1),
 ]
 
-materias = [
+subjects = [
         # Tecnicatura en desarrollo de software
     # Primer año
     (1, "Matematica Discreta y Diseño Logico",  1,1),
@@ -163,4 +159,35 @@ materias = [
     (111, "Marketing para Arquitectos (Optativa)",             5, 2),
 ]
 
+# crear primero los modelos en sql alchemy
+# crear en el seed el algorimo para sembrar los datos en ld DB
+# recien ahi ir a definir los endpoints, levantar la api y las funciones para trabajar con la DB van en crud
+
+#                                           SEED
+
+def seed():
+    create_tables()
+    with get_session() as s:
+        if s.scalars(select(Location)).first() is not None:
+            print("The database already has data.")
+            return
         
+        # 1) parents first: locations
+        for id, name, city, address in locations:
+            s.add(Location(id=id, name=name, city=city, address=address))
+        s.commit()
+
+        # 2) careers (they point to a location)
+        for id, code, name, mode, duration_years, location_id in careers:
+            s.add(Career(id=id, code=code, name=name, mode=mode, duration_years=duration_years, location_id=location_id))
+        s.commit()
+
+        # 3) subjects (they point to a career)
+        for id, name, year, career_id in subjects:
+            s.add(Subject(id=id, name=name, year=year, career_id=career_id))
+        s.commit()
+
+        print("Data loaded.")
+
+if __name__ == "__main__":
+    seed()

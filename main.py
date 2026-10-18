@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import IntegrityError, OperationalError
 
 import crud
 from security import verify_api_key
@@ -33,7 +33,10 @@ def list_career_subjects(career_id: int, year: int | None = None):
     return crud.list_career_subjects(career_id, year)
 
 
-# 4) PENDIENTE
+# 4) Listar sedes, con filtro opcional por ciudad
+@app.get("/locations")
+def list_locations(city: str | None = None):
+    return crud.list_locations(city)
 
 
 # 5) Cantidad de materias por año de una carrera
@@ -44,4 +47,12 @@ def career_summary(career_id: int):
     return crud.career_summary(career_id)
 
 
-# 6) PENDIENTE
+# 6) Crear una materia (400 si los datos están mal)
+@app.post("/subjects", status_code=201)
+def create_subject(data: dict):
+    try:
+        return crud.create_subject(data)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except IntegrityError:
+        raise HTTPException(status_code=400, detail="career_id does not exist")

@@ -1,6 +1,6 @@
 from sqlalchemy import select
-from models import get_session, Career, Subject
-
+from models import get_session, Location, Career, Subject
+from validation import validate_subject
 
 # 1) Lista las carreras. Si viene "mode", filtra por modalidad.
 def list_careers(mode: str | None = None) -> list[dict]:
@@ -27,7 +27,13 @@ def list_career_subjects(career_id: int, year: int | None = None) -> list[dict]:
         return [subject.to_dict() for subject in s.scalars(query)]
 
 
-# 4) PENDIENTE
+# 4) Lista las sedes. Si viene "city", filtra por ciudad.
+def list_locations(city: str | None = None) -> list[dict]:
+    with get_session() as s:
+        query = select(Location)
+        if city is not None:
+            query = query.where(Location.city == city)
+        return [location.to_dict() for location in s.scalars(query)]
 
 
 # 5) Cuenta las materias de una carrera agrupadas por año.
@@ -47,4 +53,11 @@ def career_summary(career_id: int) -> dict:
         }
 
 
-# 6) PENDIENTE
+# 6) Valida los datos y crea una materia nueva.
+def create_subject(data: dict) -> dict:
+    clean = validate_subject(data)
+    with get_session() as s:
+        subject = Subject(**clean)
+        s.add(subject)
+        s.commit()
+        return subject.to_dict()

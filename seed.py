@@ -159,9 +159,6 @@ subjects = [
     (111, "Marketing para Arquitectos (Optativa)",             5, 2),
 ]
 
-# crear primero los modelos en sql alchemy
-# crear en el seed el algorimo para sembrar los datos en ld DB
-# recien ahi ir a definir los endpoints, levantar la api y las funciones para trabajar con la DB van en crud
 
 #                                           SEED
 

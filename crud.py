@@ -2,6 +2,7 @@ from sqlalchemy import select
 from models import get_session, Career, Subject
 
 
+# 1) Lista las carreras. Si viene "mode", filtra por modalidad.
 def list_careers(mode: str | None = None) -> list[dict]:
     with get_session() as s:
         query = select(Career)
@@ -9,14 +10,41 @@ def list_careers(mode: str | None = None) -> list[dict]:
             query = query.where(Career.mode == mode)
         return [career.to_dict() for career in s.scalars(query)]
 
+
+# 2) Busca una carrera por su id. Devuelve None si no existe.
 def get_career(career_id: int) -> dict | None:
     with get_session() as s:
         career = s.get(Career, career_id)
         return career.to_dict() if career else None
 
+
+# 3) Lista las materias de una carrera (cruza tablas por la FK career_id).
 def list_career_subjects(career_id: int, year: int | None = None) -> list[dict]:
     with get_session() as s:
         query = select(Subject).where(Subject.career_id == career_id)
         if year is not None:
             query = query.where(Subject.year == year)
         return [subject.to_dict() for subject in s.scalars(query)]
+
+
+# 4) PENDIENTE
+
+
+# 5) Cuenta las materias de una carrera agrupadas por año.
+def career_summary(career_id: int) -> dict:
+    with get_session() as s:
+        query = select(Subject).where(Subject.career_id == career_id)
+        by_year = {}
+        for subject in s.scalars(query):
+            if subject.year in by_year:
+                by_year[subject.year] += 1
+            else:
+                by_year[subject.year] = 1
+        return {
+            "career_id": career_id,
+            "total_subjects": sum(by_year.values()),
+            "subjects_by_year": by_year,
+        }
+
+
+# 6) PENDIENTE

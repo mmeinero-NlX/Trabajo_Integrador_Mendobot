@@ -15,8 +15,8 @@ careers = [
     (1, "TDS", "Tecnicatura en Desarrollo de Software", "presencial", 3, 1),
     (2, "AU", "Arquitectura y Urbanismo", "presencial", 5, 1),
     (3, "DG", "Diseño Gráfico", "presencial", 3, 1),
-    (4, "LK", "Licenciatura en Kinesiología", "presencial", 5, 1),
-    (5, "CIyMP", "Corredor Inmobiliario y Martillero Público", "presencial", 3, 1),
+    (4, "LK", "Licenciatura en Kinesiología", "a distancia", 5, 1),
+    (5, "CIyMP", "Corredor Inmobiliario y Martillero Público", "presencial", 3, 2),
 ]
 
 subjects = [

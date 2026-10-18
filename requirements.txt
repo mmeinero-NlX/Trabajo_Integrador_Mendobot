@@ -1,5 +1,4 @@
 fastapi
 uvicorn
-uvicorn-worker
-gunicorn
+python-dotenv
 sqlalchemy

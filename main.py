@@ -19,32 +19,44 @@ def list_careers(mode: str | None = None):
 # 2) Detalle de una carrera (404 si no existe)
 @app.get("/careers/{career_id}")
 def get_career(career_id: int):
-    career = crud.get_career(career_id)
-    if career is None:
-        raise HTTPException(status_code=404, detail="Career not found")
-    return career
+    try:
+        career = crud.get_career(career_id)
+        if career is None:
+            raise HTTPException(status_code=404, detail="Career not found")
+        return career
+    except OperationalError:
+        raise HTTPException(status_code=500, detail="Database error")
 
 
 # 3) Materias de una carrera, con filtro opcional por año
 @app.get("/careers/{career_id}/subjects")
 def list_career_subjects(career_id: int, year: int | None = None):
-    if crud.get_career(career_id) is None:
-        raise HTTPException(status_code=404, detail="Career not found")
-    return crud.list_career_subjects(career_id, year)
+    try:
+        if crud.get_career(career_id) is None:
+            raise HTTPException(status_code=404, detail="Career not found")
+        return crud.list_career_subjects(career_id, year)
+    except OperationalError:
+        raise HTTPException(status_code=500, detail="Database error")
 
 
 # 4) Listar sedes, con filtro opcional por ciudad
 @app.get("/locations")
 def list_locations(city: str | None = None):
-    return crud.list_locations(city)
+    try:
+        return crud.list_locations(city)
+    except OperationalError:
+        raise HTTPException(status_code=500, detail="Database error")
 
 
 # 5) Cantidad de materias por año de una carrera
 @app.get("/careers/{career_id}/summary")
 def career_summary(career_id: int):
-    if crud.get_career(career_id) is None:
-        raise HTTPException(status_code=404, detail="Career not found")
-    return crud.career_summary(career_id)
+    try:
+        if crud.get_career(career_id) is None:
+            raise HTTPException(status_code=404, detail="Career not found")
+        return crud.career_summary(career_id)
+    except OperationalError:
+        raise HTTPException(status_code=500, detail="Database error")
 
 
 # 6) Crear una materia (400 si los datos están mal)
@@ -56,3 +68,5 @@ def create_subject(data: dict):
         raise HTTPException(status_code=400, detail=str(e))
     except IntegrityError:
         raise HTTPException(status_code=400, detail="career_id does not exist")
+    except OperationalError:
+        raise HTTPException(status_code=500, detail="Database error")

@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from models import create_tables, get_session, Location, Career, Subject
 
-#                                       DATA
+#                                                           DATA
 
 # (id, name, city, address)
 locations = [
@@ -19,17 +19,18 @@ careers = [
     (5, "CIyMP", "Corredor Inmobiliario y Martillero Público", "presencial", 3, 2),
 ]
 
+# (id, name, year, career_id)
 subjects = [
-        # Tecnicatura en desarrollo de software
-    # Primer año
-    (1, "Matematica Discreta y Diseño Logico",  1,1),
-    (2, "Analisis de Sistemas 1",               1,1),
-    (3, "Álgebra y Geometria Analitica",        1,1),
-    (4, "Ingles Técnico",                       1,1),
-    (5, "Informática",                          1,1),
+    # Tecnicatura en Desarrollo de Software (career 1)
+    # Year 1
+    (1, "Matemática Discreta y Diseño Lógico",  1, 1),
+    (2, "Análisis de Sistemas 1",               1, 1),
+    (3, "Álgebra y Geometría Analítica",        1, 1),
+    (4, "Inglés Técnico",                       1, 1),
+    (5, "Informática",                          1, 1),
 
-        # Corredor Inmobiliario y Martillero Público
-    # Primer año
+    # Corredor Inmobiliario y Martillero Público (career 5)
+    # Year 1
     (6, "Comunicación 1 (Psicología Social Básica)",    1, 5),
     (7, "Corretaje 1 (Contexto Ocupacional)",           1, 5),
     (8, "Derecho 1 (Propedéutica Jurídica)",            1, 5),
@@ -39,7 +40,7 @@ subjects = [
     (12, "Marketing 1 (Posicionamiento)",               1, 5),
     (13, "Valuación 1 (Técnicas Operacionales)",        1, 5),
     (14, "Práctica Integrada 1 (Módulo Introductorio)", 1, 5),
-    # Segundo año
+    # Year 2
     (15, "Comunicación 2 (Psicología Social Aplicada)",    2, 5),
     (16, "Corretaje 2 (Gestión de Negocios)",              2, 5),
     (17, "Derecho 2 (Logística Jurídica)",                 2, 5),
@@ -49,7 +50,7 @@ subjects = [
     (21, "Marketing 2 (Riesgos Inmobiliarios)",            2, 5),
     (22, "Valuación 2 (Técnicas Procesales)",              2, 5),
     (23, "Práctica Integrada 2 (Módulo Instrumental)",     2, 5),
-    # Tercer año
+    # Year 3
     (24, "Comunicación 3 (Oratoria)",                      3, 5),
     (25, "Derecho 3 (Procesal)",                           3, 5),
     (26, "Diseño 3 (Organizacional)",                      3, 5),
@@ -58,15 +59,15 @@ subjects = [
     (29, "Práctica Integrada 3",                           3, 5),
     (30, "Prácticas",                                      3, 5),
 
-        # Licenciatura en kinesiologia
-    # Primer año
+    # Licenciatura en Kinesiología (career 4)
+    # Year 1
     (31, "Anatomía",                                       1, 4),
     (32, "Fisiología",                                     1, 4),
     (33, "Histología",                                     1, 4),
     (34, "Física Biológica",                               1, 4),
     (35, "Inglés I (Promocional)",                         1, 4),
     (36, "Seminario I (Bioquímica)",                       1, 4),
-    # Segundo año
+    # Year 2
     (37, "Biomecánica",                                    2, 4),
     (38, "Semiopatología Médico Kinésica",                 2, 4),
     (39, "Kinefilaxia",                                    2, 4),
@@ -74,7 +75,7 @@ subjects = [
     (41, "Órtesis y Prótesis",                             2, 4),
     (42, "Psicomotricidad",                                2, 4),
     (43, "Seminario II (Diagnóstico por Imagen)",          2, 4),
-    # Tercer año
+    # Year 3
     (44, "Semiopatología Quirúrgico Kinésica",             3, 4),
     (45, "Kinesiología Médica",                            3, 4),
     (46, "Fisioterapia",                                   3, 4),
@@ -82,7 +83,7 @@ subjects = [
     (48, "Kinefisiatría Estética",                         3, 4),
     (49, "Bioinformática y Rehabilitación Computacional",  3, 4),
     (50, "Seminario III (Neurología)",                     3, 4),
-    # Cuarto año
+    # Year 4
     (51, "Kinesiología Quirúrgica",                                             4, 4),
     (52, "Kinesiología Legal",                                                  4, 4),
     (53, "Deportismo",                                                          4, 4),
@@ -93,20 +94,20 @@ subjects = [
     (58, "Metodología de la Investigación",                                     4, 4),
     (59, "Seminario IV (Prácticas Profesionales)",                              4, 4),
 
-        # Diseño Grafico
-    # Primer año
+    # Diseño Gráfico (career 3)
+    # Year 1
     (60, "Dibujo y Expresión Visual I",                 1, 3),
     (61, "Dibujo y Expresión Visual II",                1, 3),
     (62, "Informática I",                               1, 3),
     (63, "Informática II",                              1, 3),
     (64, "Taller de Introducción al Diseño I",          1, 3),
     (65, "Taller de Introducción al Diseño II",         1, 3),
-    # Segundo año
+    # Year 2
     (66, "Materialización I",                           2, 3),
     (67, "Materialización II",                          2, 3),
     (68, "Taller de Diseño Integral I",                 2, 3),
     (69, "Taller de Diseño Integral II",                2, 3),
-    # Tercer año
+    # Year 3
     (70, "Introducción a la Investigación",             3, 3),
     (71, "Opcional Específica I (Diseño Editorial)",    3, 3),
     (72, "Opcional Específica II",                      3, 3),
@@ -114,8 +115,8 @@ subjects = [
     (74, "Taller Especial de Diseño II",                3, 3),
     (75, "Presentación Final",                          3, 3),
 
-        # Arquitectura y Urbanismo
-    # Primer año
+    # Arquitectura y Urbanismo (career 2)
+    # Year 1
     (76, "Arquitectura 1",                                    1, 2),
     (77, "Construcciones 1",                                  1, 2),
     (78, "Cultura Arquitectónica",                            1, 2),
@@ -123,28 +124,28 @@ subjects = [
     (80, "Estructuras 1",                                     1, 2),
     (81, "Matemáticas",                                       1, 2),
     (82, "Sistemas de Representación",                        1, 2),
-    # Segundo año
+    # Year 2
     (83, "Ambiente 1",                                        2, 2),
     (84, "Arquitectura 2",                                    2, 2),
     (85, "Construcciones 2",                                  2, 2),
     (86, "Estructuras 2",                                     2, 2),
     (87, "Historia de la Arquitectura y el Urbanismo 1",      2, 2),
     (88, "Teoría de la Arquitectura y el Urbanismo 1",        2, 2),
-    # Tercer año
+    # Year 3
     (89, "Ambiente 2",                                        3, 2),
     (90, "Arquitectura 3",                                    3, 2),
     (91, "Construcciones 3",                                  3, 2),
     (92, "Estructuras 3",                                     3, 2),
     (93, "Historia de la Arquitectura y el Urbanismo 2",      3, 2),
     (94, "Teoría de la Arquitectura y el Urbanismo 2",        3, 2),
-    # Cuarto año
+    # Year 4
     (95, "Ambiente 3",                                        4, 2),
     (96, "Arquitectura 4",                                    4, 2),
     (97, "Construcciones 4",                                  4, 2),
     (98, "Estructuras 4",                                     4, 2),
     (99, "Historia de la Arquitectura y el Urbanismo 3",      4, 2),
     (100, "Teoría de la Arquitectura y el Urbanismo 3",       4, 2),
-    # Quinto año
+    # Year 5
     (101, "Arquitectura 5",                                    5, 2),
     (102, "Organización, Administración y Legislación",        5, 2),
     (103, "Practicantado",                                     5, 2),
@@ -153,22 +154,21 @@ subjects = [
     (106, "Proyecto Final",                                    5, 2),
     (107, "Proyecto Final (Primer Tramo)",                     5, 2),
     (108, "Proyecto Final (Segundo Tramo)",                    5, 2),
-    # Optativas: el plan las ubica en 5º año
+    # Electives: the curriculum places them in year 5
     (109, "Diseño Arquitectónico (Optativa)",                  5, 2),
     (110, "Diseño Urbano (Optativa)",                          5, 2),
     (111, "Marketing para Arquitectos (Optativa)",             5, 2),
 ]
 
 
-#                                           SEED
-
+#                                                           SEED
 def seed():
     create_tables()
     with get_session() as s:
         if s.scalars(select(Location)).first() is not None:
             print("The database already has data.")
             return
-        
+
         # 1) parents first: locations
         for id, name, city, address in locations:
             s.add(Location(id=id, name=name, city=city, address=address))
@@ -185,6 +185,7 @@ def seed():
         s.commit()
 
         print("Data loaded.")
+
 
 if __name__ == "__main__":
     seed()

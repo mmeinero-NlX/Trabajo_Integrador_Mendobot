@@ -2,7 +2,8 @@ from sqlalchemy import select
 from models import get_session, Location, Career, Subject
 from validation import validate_subject
 
-# 1) Lista las carreras. Si viene "mode", filtra por modalidad.
+
+# 1) Lists careers. If "mode" is given, filters by mode.
 def list_careers(mode: str | None = None) -> list[dict]:
     with get_session() as s:
         query = select(Career)
@@ -11,14 +12,14 @@ def list_careers(mode: str | None = None) -> list[dict]:
         return [career.to_dict() for career in s.scalars(query)]
 
 
-# 2) Busca una carrera por su id. Devuelve None si no existe.
+# 2) Finds a career by its id. Returns None if it does not exist.
 def get_career(career_id: int) -> dict | None:
     with get_session() as s:
         career = s.get(Career, career_id)
         return career.to_dict() if career else None
 
 
-# 3) Lista las materias de una carrera (cruza tablas por la FK career_id).
+# 3) Lists the subjects of a career (joins tables through the career_id FK).
 def list_career_subjects(career_id: int, year: int | None = None) -> list[dict]:
     with get_session() as s:
         query = select(Subject).where(Subject.career_id == career_id)
@@ -27,7 +28,7 @@ def list_career_subjects(career_id: int, year: int | None = None) -> list[dict]:
         return [subject.to_dict() for subject in s.scalars(query)]
 
 
-# 4) Lista las sedes. Si viene "city", filtra por ciudad.
+# 4) Lists locations. If "city" is given, filters by city.
 def list_locations(city: str | None = None) -> list[dict]:
     with get_session() as s:
         query = select(Location)
@@ -36,7 +37,7 @@ def list_locations(city: str | None = None) -> list[dict]:
         return [location.to_dict() for location in s.scalars(query)]
 
 
-# 5) Cuenta las materias de una carrera agrupadas por año.
+# 5) Counts the subjects of a career grouped by year.
 def career_summary(career_id: int) -> dict:
     with get_session() as s:
         query = select(Subject).where(Subject.career_id == career_id)
@@ -53,10 +54,15 @@ def career_summary(career_id: int) -> dict:
         }
 
 
-# 6) Valida los datos y crea una materia nueva.
+# 6) Validates the data, checks the career and creates a new subject.
 def create_subject(data: dict) -> dict:
     clean = validate_subject(data)
     with get_session() as s:
+        career = s.get(Career, clean["career_id"])
+        if career is None:
+            raise ValueError("career_id does not exist")
+        if clean["year"] > career.duration_years:
+            raise ValueError(f"year cannot be greater than {career.duration_years} for this career")
         subject = Subject(**clean)
         s.add(subject)
         s.commit()

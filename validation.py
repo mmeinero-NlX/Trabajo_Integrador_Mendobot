@@ -1,4 +1,5 @@
-# Validaciones a mano. Reciben un dict, lo revisan y devuelven uno limpio.
+# Manual validations. They receive a dict, check it and return a clean one.
+# If something is wrong, they raise ValueError. Nothing here touches the database.
 
 def validate_subject(data: dict) -> dict:
     name = data.get("name")

@@ -326,3 +326,30 @@ Si no llegás con los seis, priorizá en este orden: los dos de arriba, el de ma
 - Hoy las 5 carreras son presenciales y todas están en la sede de Río Cuarto. Así, `?mode=` y `?city=` no muestran nada distinto de la lista completa. Si cargás alguna carrera virtual o de otra sede, se ve el filtro funcionando en la demo.
 - Antes de cada commit, levantá la API y probá en `/docs`.
 - El README sigue con la descripción del chatbot. Agregale cómo correr el proyecto y los endpoints: hay una plantilla en [guias/como_escribir_un_readme.md](guias/como_escribir_un_readme.md).
+
+## 19/10
+
+**Lo que hay: el Nivel A está completo y funcionando.** 🎉 Probé la API entera en una copia limpia:
+
+| # | Endpoint | Resultado |
+|---|---|---|
+| 1 | `GET /careers?mode=` | ✅ Sin filtro trae las 5; `?mode=a distancia` trae solo Kinesiología |
+| 2 | `GET /careers/{id}` | ✅ `/careers/99` da 404 |
+| 3 | `GET /careers/{id}/subjects?year=` | ✅ Con y sin año; carrera inexistente da 404 |
+| 4 | `GET /locations?city=` | ✅ `?city=Mendoza` trae solo la Sede Central |
+| 5 | `GET /careers/{id}/summary` | ✅ Arquitectura: 36 materias (7, 6, 6, 6 y 11 por año) |
+| 6 | `POST /subjects` | ✅ 201 con datos válidos; 400 con nombre vacío, año `true`, año `"2"`, año 9, cuerpo vacío o una carrera que no existe |
+
+Además: sin clave o con clave mala da **401**; si falta la base, todos los endpoints responden un error controlado ("Database error") en vez de caerse; el seed no duplica. Cambiaste la modalidad y la sede de dos carreras para que los filtros se vean en la demo, que era la recomendación del 17/10. 👍
+
+La estructura es la de la guía: endpoints cortos en `main.py`, la base en `crud.py`, la validación en `validation.py`. Los commits de esta semana dicen qué hace cada uno. Muy buen trabajo.
+
+**Lo que falta para la entrega del 21/10**
+1. **README.** Sigue con la descripción del chatbot. Tiene que explicar cómo correr el proyecto desde cero (entorno virtual, `pip install -r requirements.txt`, `python seed.py`, `uvicorn main:app --reload`), los 6 endpoints, cómo usar la clave en `/docs` (botón **Authorize**) y si usaste IA. Hay una plantilla en [guias/como_escribir_un_readme.md](guias/como_escribir_un_readme.md).
+
+**Recomendaciones**
+- **Comentarios en inglés** para la entrega final. Hoy los de `main.py`, `crud.py` y `validation.py` están en español.
+- La clave está escrita en `security.py`, y vale así. Si querés llevarla a un `.env` (ya tenés `python-dotenv` en `requirements.txt`), está la guía [guias/variables_de_entorno.md](guias/variables_de_entorno.md). En la defensa te puedo preguntar por qué conviene sacarla del código.
+- El `POST` limita el año a 1-5, pero algunas carreras duran 3 años. Se podría controlar contra `duration_years` de la carrera. No es obligatorio.
+
+**Para la defensa (28/10):** probá la demo completa en la notebook con la que vas a presentar: borrar `mendobot.db`, correr `python seed.py`, levantar con `uvicorn` y recorrer los 6 endpoints desde `/docs`, incluido un pedido sin clave para mostrar el 401.

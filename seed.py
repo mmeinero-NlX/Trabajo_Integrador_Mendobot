@@ -5,7 +5,7 @@ from models import create_tables, get_session, Location, Career, Subject
 
 # (id, name, city, address)
 locations = [
-    (1, "Sede Regional Río Cuarto", "Río Cuarto", "Belgrano esq. Hipólito Yrigoyen"),
+    (1, "Sede Regional Río Cuarto", "Rio Cuarto", "Belgrano esq. Hipólito Yrigoyen"),
     (2, "Sede Central", "Mendoza", "Boulogne Sur Mer 683"),
     (3, "Sede Regional San Rafael", "San Rafael", "Bernardo de Irigoyen y España"),
 ]

@@ -113,6 +113,6 @@ All the data is sample data, loaded by `seed.py`.
 ## Use of AI
 
 I used an AI assistant (Claude) to go through the course material faster
-(FastAPI, API keys, files, etc.), to get code suggestions based on the Pokédex
+(FastAPI, API keys, files, etc.), to get code suggestions based on the Pokedex
 example code, and also to find errors. Then I wrote, tested and reviewed every
 part of the code myself.

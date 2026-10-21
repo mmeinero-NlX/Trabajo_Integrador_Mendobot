@@ -353,3 +353,18 @@ La estructura es la de la guía: endpoints cortos en `main.py`, la base en `crud
 - El `POST` limita el año a 1-5, pero algunas carreras duran 3 años. Se podría controlar contra `duration_years` de la carrera. No es obligatorio.
 
 **Para la defensa (28/10):** probá la demo completa en la notebook con la que vas a presentar: borrar `mendobot.db`, correr `python seed.py`, levantar con `uvicorn` y recorrer los 6 endpoints desde `/docs`, incluido un pedido sin clave para mostrar el 401.
+
+## 21/10 (entrega)
+
+**Todo completo.** 🎉 Volví a probar la API en una copia limpia, siguiendo tu README paso a paso, y funciona de principio a fin. Resolviste todo lo del 19/10, y también lo que era recomendación:
+- **README completo:** cómo correrlo desde cero (Windows y Linux), los 6 endpoints, cómo usar la clave en `/docs`, las reglas del `POST`, los errores posibles y la declaración de uso de IA.
+- **La clave se lee del `.env`** con `python-dotenv`, hay un `.env.example`, y si no está el `.env` no deja pasar nada.
+- **Comentarios en inglés.**
+- **El año de una materia se controla contra la duración de la carrera:** una materia de 4.º año en la Tecnicatura (3 años) da 400.
+
+Los 6 endpoints, el 404, el 401 y los errores controlados siguen funcionando igual que el 19/10.
+
+**Para la defensa (28/10):**
+- Probá la demo en la notebook con la que vas a presentar, siguiendo tu propio README.
+- Mostrá un pedido sin clave (401), una carrera que no existe (404), un filtro y el resumen.
+- Preparate para explicar el recorrido de un pedido: `main.py` → `crud.py` → `validation.py` → la base. Contá también por qué la clave va en el `.env`.
